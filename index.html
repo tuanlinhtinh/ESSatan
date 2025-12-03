@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ES Satan ho ho ho</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --accent:#fff;
+      --tree-green:#0f7a3a;
+      --tree-bark:#6b3f2f;
+    }
+    html,body{height:100%;margin:0;font-family:system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+    body{
+      background: linear-gradient(180deg, #071028 0%, #0b1020 60%, #0f1a2b 100%);
+      overflow:hidden; color:var(--accent);
+      display:flex;align-items:center;justify-content:center;
+    }
+
+    /* Container for everything */
+    .stage{
+      position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    }
+
+    /* Countdown box */
+    .countdown{
+      position:relative; z-index:30; text-align:center; backdrop-filter: blur(6px);
+      padding:1.2rem 2rem; border-radius:30px; box-shadow: 0 10px 40px rgba(2,6,23,0.6);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    }
+    .countdown h1{ margin:0 0 .5rem 0; font-size: clamp(18px, 3vw, 28px); font-weight:600; color:#fff; letter-spacing:1px}
+    .time{
+      font-size: clamp(40px, 9vw, 120px); font-weight:800; line-height:1; font-family: 'Segoe UI Black', system-ui; 
+      text-shadow: 0 6px 16px rgba(0,0,0,0.6), 0 0 30px rgba(255,255,255,0.04) inset;
+      color: #fff;
+      display:flex; gap:1rem; align-items:center; justify-content:center;
+    }
+    .segment{display:flex; flex-direction:column; align-items:center; min-width:64px}
+    .segment .label{ font-size: clamp(10px, 1.2vw, 14px); opacity:0.85 }
+
+    /* Christmas tree on the left-bottom */
+    .tree-wrap{
+      position: absolute; left:6%; bottom:4%; width:280px; height:420px; z-index:10; transform-origin:50% 95%;
+      animation: sway 2s ease-in-out infinite;
+    }
+    @keyframes sway{
+      0%{transform: rotate(-2deg)}
+      50%{transform: rotate(2deg)}
+      100%{transform: rotate(-2deg)}
+    }
+
+    /* ground / snow bank */
+    .ground{
+      position:absolute; left:0; right:0; bottom:0; height:12%; background: linear-gradient(180deg,#ffffff11,#ffffff0a); z-index:15; pointer-events:none;
+      box-shadow: 0 -20px 80px rgba(0,0,0,0.6) inset;
+    }
+
+    /* small ornaments glow */
+    .ornament{ filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5)); }
+
+    /* Responsive adjustments */
+    @media (max-width:600px){
+      .tree-wrap{ width:160px; height:240px; left:4%; }
+      .countdown{ padding:.8rem 1rem }
+      .time{ gap:.5rem }
+    }
+
+    /* subtle twinkle stars */
+    .stars{ position:absolute; inset:0; z-index:5; background-image: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.06) 0 2px, transparent 3px), radial-gradient(circle at 65% 10%, rgba(255,255,255,0.04) 0 2px, transparent 3px), radial-gradient(circle at 30% 70%, rgba(255,255,255,0.03) 0 2px, transparent 3px); background-repeat:no-repeat; opacity:0.9 }
+
+    /* small caption */
+    .caption{ position:absolute; right:1.6rem; bottom:1rem; z-index:40; font-size:12px; opacity:0.8 }
+
+    /* Canvas for snow sits above background but below primary UI */
+    #snow-canvas{ position:absolute; left:0; top:0; width:100%; height:100%; z-index:20; pointer-events:none }
+
+  </style>
+</head>
+<body>
+  <div class="stage">
+
+    <div class="stars" aria-hidden></div>
+
+    <!-- Countdown center -->
+    <div class="countdown" role="region" aria-label="Đồng hồ đếm ngược đến Giáng sinh">
+      <h1 id="title">ES Satan is choosing gift</h1>
+      <div class="time" id="time">
+        <div class="segment"><div class="value" id="days">0</div><div class="label">Ngày</div></div>
+        <div class="segment"><div class="value" id="hours">00</div><div class="label">Giờ</div></div>
+        <div class="segment"><div class="value" id="minutes">00</div><div class="label">Phút</div></div>
+        <div class="segment"><div class="value" id="seconds">00</div><div class="label">Giây</div></div>
+      </div>
+    </div>
+
+    <!-- Snow canvas -->
+    <canvas id="snow-canvas"></canvas>
+
+    <!-- Swaying Christmas tree (SVG) -->
+    <div class="tree-wrap" aria-hidden>
+      <svg viewBox="0 0 200 300" width="100%" height="100%" class="ornament">
+        <!-- star -->
+        <polygon points="100,6 112,46 154,46 120,70 132,110 100,88 68,110 80,70 46,46 88,46" fill="#ffd54a" stroke="#f8d35e" stroke-width="1" />
+
+        <!-- tree layers -->
+        <g transform="translate(0,20)">
+          <path d="M100 40 L30 140 L170 140 Z" fill="var(--tree-green)" />
+          <path d="M100 80 L20 190 L180 190 Z" fill="#0b6930" opacity="0.95" />
+          <path d="M100 130 L10 260 L190 260 Z" fill="#08602b" opacity="0.92" />
+        </g>
+
+        <!-- trunk -->
+        <rect x="86" y="260" width="28" height="30" rx="4" fill="var(--tree-bark)" />
+
+        <!-- ornaments (circles) -->
+        <circle cx="80" cy="130" r="6" fill="#e53935" />
+        <circle cx="120" cy="150" r="5" fill="#ffeb3b" />
+        <circle cx="60" cy="180" r="5" fill="#4fc3f7" />
+        <circle cx="140" cy="120" r="6" fill="#ff6f61" />
+        <circle cx="100" cy="200" r="6" fill="#a970ff" />
+
+        <!-- garland -->
+        <path d="M40 160 Q100 110 160 160" stroke="#ffd1dc" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.9"/>
+
+      </svg>
+    </div>
+
+    <div class="ground" aria-hidden></div>
+
+    
+  </div>
+
+  <script>
+    // ======= Countdown logic ========
+    // Default target: 25 Dec this year at 00:00 local time. If today past, use next year.
+    function getDefaultTarget(){
+      const now = new Date();
+      let year = now.getFullYear();
+      const candidate = new Date(year, 11, 25, 0, 0, 0); // month 11 = December
+      if (now > candidate) year += 1;
+      return new Date(year,11,25,0,0,0);
+    }
+    const target = getDefaultTarget();
+
+    function pad(n){ return String(n).padStart(2,'0'); }
+
+    function updateCountdown(){
+      const now = new Date();
+      let diff = Math.max(0, target - now);
+      const sec = Math.floor(diff/1000)%60;
+      const min = Math.floor(diff/1000/60)%60;
+      const hr  = Math.floor(diff/1000/60/60)%24;
+      const days = Math.floor(diff/1000/60/60/24);
+
+      document.getElementById('days').textContent = days;
+      document.getElementById('hours').textContent = pad(hr);
+      document.getElementById('minutes').textContent = pad(min);
+      document.getElementById('seconds').textContent = pad(sec);
+
+      if(diff<=0){
+        document.getElementById('title').textContent = 'Chúc mừng Giáng sinh!';
+        clearInterval(intervalId);
+      }
+    }
+    updateCountdown();
+    const intervalId = setInterval(updateCountdown, 250);
+
+    // ======= Snow effect (canvas) ========
+    const canvas = document.getElementById('snow-canvas');
+    const ctx = canvas.getContext('2d');
+    let W = canvas.width = window.innerWidth;
+    let H = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', ()=>{
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    });
+
+    // Create snowflakes
+    const flakes = [];
+    const flakesCount = Math.floor((window.innerWidth*window.innerHeight)/70000) + 40; // scale with screen
+
+    function rand(min,max){ return Math.random()*(max-min)+min }
+
+    for(let i=0;i<flakesCount;i++){
+      flakes.push({
+        x: Math.random()*W,
+        y: Math.random()*H - H,
+        r: rand(1,4.5),
+        d: rand(1,4),
+        vx: rand(-0.3,0.3),
+        vy: rand(0.3,1.2)
+      });
+    }
+
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      for(let f of flakes){
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        ctx.fill();
+      }
+      update();
+    }
+    let angle = 0;
+    function update(){
+      angle += 0.002;
+      for(let f of flakes){
+        // horizontal drifting
+        f.x += Math.sin(angle + f.d) * 0.6 + f.vx;
+        f.y += f.vy * (0.6 + f.r/6);
+        // reset
+        if(f.y > H + 10 || f.x < -20 || f.x > W+20){
+          f.x = Math.random()*W;
+          f.y = -10 - Math.random()*H*0.5;
+        }
+      }
+    }
+
+    // animate
+    function loop(){ draw(); requestAnimationFrame(loop); }
+    loop();
+
+    // Accessibility: allow user to set target by URL param ?target=YYYY-MM-DDTHH:MM
+    function parseTargetFromURL(){
+      const params = new URLSearchParams(location.search);
+      if(params.has('target')){
+        const t = params.get('target');
+        const d = new Date(t);
+        if(!isNaN(d)) return d;
+      }
+      return null;
+    }
+    const custom = parseTargetFromURL();
+    if(custom) {
+      // override
+      target.setTime(custom.getTime());
+      updateCountdown();
+    }
+
+  </script>
+</body>
+</html>
